@@ -106,7 +106,7 @@ export class BasementEmbeds {
           .setCustomId(`ping_${p.id}`)
           .setLabel(p.name)
           .setEmoji(p.emoji)
-          .setStyle(ButtonStyle.Success)
+          .setStyle(ButtonStyle.Secondary)
       )
     );
 
@@ -216,7 +216,7 @@ export class BasementEmbeds {
         .setCustomId(`watchparty_host_${item.id}`)
         .setLabel('Host Watch Party')
         .setEmoji('🍿')
-        .setStyle(ButtonStyle.Success),
+        .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
         .setCustomId('random_reroll')
         .setLabel('🎲 Roll Another')
@@ -259,7 +259,7 @@ export class BasementEmbeds {
       new ButtonBuilder()
         .setCustomId('random_reroll')
         .setLabel('🎲 Surprise Me')
-        .setStyle(ButtonStyle.Success)
+        .setStyle(ButtonStyle.Secondary)
     );
 
     return { embeds: [embed], components: [row] };
@@ -267,17 +267,17 @@ export class BasementEmbeds {
 
   public static requestTicket(req: ContentRequest): { embeds: EmbedBuilder[]; components: ActionRowBuilder<ButtonBuilder>[] } {
     const statusBadges = {
-      pending: '🟡 PENDING REVIEW',
-      approved: '🟢 APPROVED',
-      added: '🎉 ADDED TO CATALOG',
-      rejected: '🔴 REJECTED',
+      pending: '⚪ PENDING REVIEW',
+      approved: '⬜ APPROVED',
+      added: '✨ ADDED TO CATALOG',
+      rejected: '⬛ REJECTED',
     };
 
     const statusColors = {
-      pending: BASEMENT_COLORS.amber,
-      approved: BASEMENT_COLORS.cyan,
-      added: BASEMENT_COLORS.emerald,
-      rejected: BASEMENT_COLORS.rose,
+      pending: BASEMENT_COLORS.silver,
+      approved: BASEMENT_COLORS.white,
+      added: BASEMENT_COLORS.white,
+      rejected: BASEMENT_COLORS.slate,
     };
 
     const embed = new EmbedBuilder()
@@ -310,19 +310,19 @@ export class BasementEmbeds {
         .setCustomId(`req_approve_${req.id}`)
         .setLabel('Approve')
         .setEmoji('✅')
-        .setStyle(ButtonStyle.Success)
+        .setStyle(ButtonStyle.Secondary)
         .setDisabled(req.status === 'approved' || req.status === 'added'),
       new ButtonBuilder()
         .setCustomId(`req_added_${req.id}`)
         .setLabel('Mark Added')
-        .setEmoji('🎉')
-        .setStyle(ButtonStyle.Primary)
+        .setEmoji('✨')
+        .setStyle(ButtonStyle.Secondary)
         .setDisabled(req.status === 'added'),
       new ButtonBuilder()
         .setCustomId(`req_reject_${req.id}`)
         .setLabel('Reject')
-        .setEmoji('❌')
-        .setStyle(ButtonStyle.Danger)
+        .setEmoji('✖️')
+        .setStyle(ButtonStyle.Secondary)
         .setDisabled(req.status === 'rejected')
     );
 
@@ -334,7 +334,7 @@ export class BasementEmbeds {
 
     const embed = new EmbedBuilder()
       .setTitle(`🍿 Community Watch Party: ${wp.title}`)
-      .setColor(BASEMENT_COLORS.emerald)
+      .setColor(BASEMENT_COLORS.white)
       .setDescription(
         `Join fellow Basement members for a synced stream experience!\nGrab your popcorn and hop into the voice lounge.`
       )
@@ -358,7 +358,7 @@ export class BasementEmbeds {
         .setCustomId(`wp_rsvp_${wp.id}`)
         .setLabel(`RSVP / Join (${wp.attendees.length})`)
         .setEmoji('🎟️')
-        .setStyle(ButtonStyle.Success),
+        .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
         .setLabel('▶ Stream on Basement')
         .setStyle(ButtonStyle.Link)
@@ -376,8 +376,8 @@ export class BasementEmbeds {
     const webNode = nodes.find(n => n.type === 'web') || nodes[0];
 
     const embed = new EmbedBuilder()
-      .setTitle('🟢 Basement Streaming Platform Status')
-      .setColor(BASEMENT_COLORS.emerald)
+      .setTitle('⚪ Basement Streaming Platform Status')
+      .setColor(BASEMENT_COLORS.white)
       .setDescription(
         `Official streaming services on [**basementx.lol**](https://basementx.lol) are fully operational.\n\n` +
         `**Official Platform:** [basementx.lol](https://basementx.lol)\n` +
@@ -413,14 +413,14 @@ export class BasementEmbeds {
 
     for (const m of DEFAULT_MIRRORS) {
       const badge = m.isOfficial ? '⭐ OFFICIAL' : '🛡️ MIRROR';
-      const statusEmoji = m.status === 'active' ? '🟢' : '🟡';
+      const statusEmoji = m.status === 'active' ? '⚪' : '⚫';
       desc += `${statusEmoji} **https://${m.domain}** (\`${badge}\`)\n`;
       desc += `↳ Location: *${m.region}* • Cloudflare: \`${m.cloudflareProtected ? 'Protected' : 'Direct Edge'}\`\n\n`;
     }
 
     const embed = new EmbedBuilder()
       .setTitle('🌐 Official Basement Domains & Proxy Mirrors')
-      .setColor(BASEMENT_COLORS.emerald)
+      .setColor(BASEMENT_COLORS.white)
       .setDescription(desc)
       .setFooter({
         text: 'Basement Domain Registry • Always verify SSL certificate',
@@ -592,7 +592,7 @@ export class BasementEmbeds {
 
     const embed = new EmbedBuilder()
       .setTitle(title)
-      .setColor(page === 3 ? BASEMENT_COLORS.violet : BASEMENT_COLORS.emerald)
+      .setColor(BASEMENT_COLORS.white)
       .setDescription(desc)
       .setFooter({
         text: `Basement Help Manual • Page ${page + 1} of 4 • Category: ${categoryName}`,

@@ -1,16 +1,26 @@
 import { ColorRoleDef, PingRoleDef, ShowRoleDef, DomainMirror } from '../types/index.js';
 
 export const BASEMENT_COLORS = {
-  emerald: 0x22c55e,
-  mint: 0x10b981,
-  obsidian: 0x080808,
-  charcoal: 0x0f0f11,
-  slate: 0x141417,
+  white: 0xffffff,
+  pureWhite: 0xffffff,
+  silver: 0xd4d4d8,
+  platinum: 0xe4e4e7,
+  ash: 0xa1a1aa,
+  gray: 0x71717a,
+  slate: 0x27272a,
   card: 0x18181b,
-  cyan: 0x06b6d4,
-  violet: 0xa855f7,
-  amber: 0xf59e0b,
-  rose: 0xef4444,
+  charcoal: 0x121214,
+  obsidian: 0x010101,
+  black: 0x000001,
+
+  // Mapped theme aliases for complete monochrome styling across all embeds
+  emerald: 0xffffff, // Primary embed border & accent -> crisp pure white
+  mint: 0xf4f4f5,
+  cyan: 0xd4d4d8,
+  violet: 0xffffff,
+  amber: 0xd4d4d8,
+  rose: 0x71717a,
+  border: 0x27272a,
 };
 
 // Aliases for compatibility
@@ -31,13 +41,13 @@ export const BASEMENT_BRANDING = {
 export const ZENOX_BRANDING = BASEMENT_BRANDING;
 
 export const DEFAULT_COLOR_ROLES: ColorRoleDef[] = [
-  { id: 'pink', name: 'Pink', emoji: '1️⃣', hex: '#ec4899' },
-  { id: 'purple', name: 'Purple', emoji: '2️⃣', hex: '#a855f7' },
-  { id: 'blue', name: 'Blue', emoji: '3️⃣', hex: '#3b82f6' },
-  { id: 'green', name: 'Green', emoji: '4️⃣', hex: '#22c55e' },
-  { id: 'orange', name: 'Orange', emoji: '5️⃣', hex: '#f97316' },
-  { id: 'yellow', name: 'Yellow', emoji: '6️⃣', hex: '#eab308' },
-  { id: 'red', name: 'Red', emoji: '7️⃣', hex: '#ef4444' },
+  { id: 'pure_white', name: 'Pure White', emoji: '⚪', hex: '#ffffff' },
+  { id: 'platinum', name: 'Platinum', emoji: '🪙', hex: '#e4e4e7' },
+  { id: 'silver', name: 'Silver', emoji: '🥈', hex: '#d4d4d8' },
+  { id: 'ash_gray', name: 'Ash Gray', emoji: '🔘', hex: '#a1a1aa' },
+  { id: 'slate', name: 'Slate', emoji: '🗿', hex: '#71717a' },
+  { id: 'graphite', name: 'Graphite', emoji: '✏️', hex: '#3f3f46' },
+  { id: 'midnight', name: 'Midnight', emoji: '⚫', hex: '#010101' },
 ];
 
 export const DEFAULT_PING_ROLES: PingRoleDef[] = [

@@ -448,11 +448,11 @@ export const sayCommand: Command = {
         .setDescription('Embed color accent')
         .setRequired(false)
         .addChoices(
-          { name: '🟢 Emerald (#22c55e)', value: 'emerald' },
-          { name: '🟣 Purple (#a855f7)', value: 'purple' },
-          { name: '🔵 Cyan (#06b6d4)', value: 'cyan' },
-          { name: '🟡 Amber (#f59e0b)', value: 'amber' },
-          { name: '🔴 Rose (#f43f5e)', value: 'rose' }
+          { name: '⚪ Pure White (#ffffff)', value: 'white' },
+          { name: '🪙 Platinum (#e4e4e7)', value: 'platinum' },
+          { name: '🥈 Silver (#d4d4d8)', value: 'silver' },
+          { name: '🗿 Slate (#71717a)', value: 'slate' },
+          { name: '⚫ Charcoal / Black (#000001)', value: 'black' }
         )
     ),
   async execute(interaction) {
@@ -463,7 +463,7 @@ export const sayCommand: Command = {
       (interaction.options.getChannel('channel') as TextChannel) || (interaction.channel as TextChannel);
     const asEmbed = interaction.options.getBoolean('as_embed') ?? false;
     const title = interaction.options.getString('title');
-    const colorChoice = interaction.options.getString('color') || 'emerald';
+    const colorChoice = interaction.options.getString('color') || 'white';
 
     if (!targetChannel || !('send' in targetChannel)) {
       await interaction.reply({ content: '❌ Target channel is invalid or cannot be messaged.', flags: MessageFlags.Ephemeral });
@@ -473,16 +473,21 @@ export const sayCommand: Command = {
     try {
       if (asEmbed) {
         const colorMap: Record<string, number> = {
-          emerald: BASEMENT_COLORS.emerald,
-          purple: BASEMENT_COLORS.violet,
-          cyan: BASEMENT_COLORS.cyan,
-          amber: BASEMENT_COLORS.amber,
-          rose: BASEMENT_COLORS.rose,
+          white: BASEMENT_COLORS.white,
+          platinum: BASEMENT_COLORS.platinum,
+          silver: BASEMENT_COLORS.silver,
+          slate: BASEMENT_COLORS.slate,
+          black: BASEMENT_COLORS.black,
+          emerald: BASEMENT_COLORS.white,
+          purple: BASEMENT_COLORS.silver,
+          cyan: BASEMENT_COLORS.white,
+          amber: BASEMENT_COLORS.silver,
+          rose: BASEMENT_COLORS.slate,
         };
 
         const embed = new EmbedBuilder()
           .setDescription(message)
-          .setColor(colorMap[colorChoice] || BASEMENT_COLORS.emerald)
+          .setColor(colorMap[colorChoice] || BASEMENT_COLORS.white)
           .setFooter({
             text: 'Basement Cinema Network • Official Broadcast',
             iconURL: BASEMENT_BRANDING.avatarUrl,
@@ -961,7 +966,7 @@ export const adminsetupCommand: Command = {
           try {
             await guild.roles.create({
               name: show.name,
-              color: 0x06b6d4,
+              color: BASEMENT_COLORS.silver,
               permissions: [],
               reason: 'Basement Admin Setup / Movie & TV Show Roles',
             });
@@ -1018,7 +1023,7 @@ export const adminsetupCommand: Command = {
           try {
             await guild.roles.create({
               name: ping.name,
-              color: 0xa855f7,
+              color: BASEMENT_COLORS.silver,
               permissions: [],
               reason: 'Basement Admin Setup / Notification Roles',
             });
