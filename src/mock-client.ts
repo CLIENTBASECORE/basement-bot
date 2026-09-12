@@ -53,13 +53,41 @@ async function testSuite() {
 
   // 7. Test Requests Persistence
   console.log('7. Testing Content Requests Persistence...');
-  const requests = db.getRequests();
+  let requests = db.getRequests();
+  if (requests.length === 0) {
+    db.addRequest({
+      id: 'req-sample',
+      title: 'Interstellar',
+      type: 'movie',
+      year: '2014',
+      notes: '1080p',
+      requesterId: '12345',
+      requesterTag: 'Tester',
+      status: 'pending',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+    requests = db.getRequests();
+  }
   console.log(`   Total Requests in Queue: ${requests.length}`);
   const ticketEmbed = BasementEmbeds.requestTicket(requests[0]);
   console.log(`   Ticket #${requests[0].id} Status: ${requests[0].status}`);
   console.log('   ✅ Request ticket valid.\n');
 
-  console.log('\x1b[32m=== ALL 7 SYSTEM TESTS PASSED SUCCESSFULLY ===\x1b[0m');
+  // 8. Test Backend Prometheus Metrics
+  console.log('8. Testing Live Backend Prometheus Metrics (https://be.basementx.lol/metrics)...');
+  const { MetricsService } = await import('./services/metrics.js');
+  const metrics = await MetricsService.fetchMetrics();
+  const metricsEmbed = BasementEmbeds.createMetricsEmbed(metrics);
+  console.log(`   Uptime: ${metrics.uptimeFormatted}`);
+  console.log(`   Resident RAM: ${metrics.residentMemoryMb} MB`);
+  console.log(`   Site Requests: ${metrics.siteRequestsTotal}`);
+  console.log(`   Total Stream Watches: ${metrics.totalWatches} (Rate: ${metrics.watchSuccessRate}%)`);
+  console.log(`   Top Scrapers: ${metrics.topProviders.length} providers`);
+  console.log(`   Embed Title: "${metricsEmbed.embeds[0].data.title}"`);
+  console.log('   ✅ Metrics telemetry valid.\n');
+
+  console.log('\x1b[32m=== ALL 8 SYSTEM TESTS PASSED SUCCESSFULLY ===\x1b[0m');
 }
 
 testSuite();

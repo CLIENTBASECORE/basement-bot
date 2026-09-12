@@ -111,7 +111,8 @@ export function formatTmdbMedia(raw: any, explicitType?: 'movie' | 'tv'): MediaI
       raw.overview ||
       `Stream "${title}" in ultra high definition with multi-language audio & subtitles on Basement Cinema Network.`,
     genres: genreNames.length > 0 ? genreNames.slice(0, 4) : [isMovie ? 'Movie' : 'TV Series'],
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/${type}/${raw.id}-${slug}`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-${type === 'movie' ? 'movie' : 'tv'}-${raw.id}-${slug}`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-${type === 'movie' ? 'movie' : 'tv'}-${raw.id}-${slug}`,
     quality: rating >= 8.0 ? '4K HDR' : '1080p Ultra',
   };
 }
@@ -129,7 +130,8 @@ const FALLBACK_CATALOG: MediaItem[] = [
     overview: 'Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.',
     genres: ['Sci-Fi', 'Adventure', 'Action'],
     duration: '2h 46m',
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/movie/693134-dune-part-two`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-693134-dune-part-two`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-693134-dune-part-two`,
     quality: '4K HDR',
   },
   {
@@ -145,7 +147,8 @@ const FALLBACK_CATALOG: MediaItem[] = [
     genres: ['Animation', 'Sci-Fi', 'Action', 'Drama'],
     seasons: 2,
     episodes: 18,
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/tv/94605-arcane`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-tv-94605-arcane`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-tv-94605-arcane`,
     quality: '4K HDR',
   },
   {
@@ -160,7 +163,8 @@ const FALLBACK_CATALOG: MediaItem[] = [
     overview: 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.',
     genres: ['Adventure', 'Drama', 'Sci-Fi'],
     duration: '2h 49m',
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/movie/157336-interstellar`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-157336-interstellar`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-157336-interstellar`,
     quality: '4K HDR',
   },
   {
@@ -176,7 +180,8 @@ const FALLBACK_CATALOG: MediaItem[] = [
     genres: ['Sci-Fi', 'Thriller', 'Mystery'],
     seasons: 2,
     episodes: 19,
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/tv/110492-severance`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-tv-110492-severance`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-tv-110492-severance`,
     quality: '4K HDR',
   },
   {
@@ -191,7 +196,8 @@ const FALLBACK_CATALOG: MediaItem[] = [
     overview: 'Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets.',
     genres: ['Action', 'Crime', 'Drama', 'Thriller'],
     duration: '2h 32m',
-    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/movie/155-the-dark-knight`,
+    zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-155-the-dark-knight`,
+    basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-155-the-dark-knight`,
     quality: '4K HDR',
   },
 ];
@@ -246,7 +252,8 @@ export class CatalogService {
         backdropUrl: 'https://image.tmdb.org/t/p/w1280/xOMo8BRK7PfcJv9JCnx7s5200SV.jpg',
         overview: `Live streaming available for "${query}" on the Basement Cinema Network. Instant playback with multi-language subs and 4K remuxes.`,
         genres: ['Action', 'Thriller', 'Ultra HD'],
-        zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/watch/movie/${slug}`,
+        zenoxUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-0-${slug}`,
+        basementUrl: `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-0-${slug}`,
         quality: '4K HDR',
       },
     ];

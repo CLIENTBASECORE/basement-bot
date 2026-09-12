@@ -10,6 +10,7 @@ import { db } from '../database/db.js';
 import { CatalogService } from '../services/catalog.js';
 import { StatusService } from '../services/status.js';
 import { AiChatService } from '../services/aiChat.js';
+import { MetricsService } from '../services/metrics.js';
 import { BasementEmbeds } from '../utils/embeds.js';
 import { BASEMENT_COLORS, BASEMENT_BRANDING, DEFAULT_SHOW_ROLES, DEFAULT_PING_ROLES } from '../utils/branding.js';
 import { ContentRequest, WatchParty } from '../types/index.js';
@@ -329,9 +330,10 @@ export async function handlePrefixMessage(message: Message, client: Client): Pro
         const year = parts[1] || '2024';
         const quality = parts[2] || 'Ultra HD';
 
+        const cleanSlug = encodeURIComponent(title.toLowerCase().replace(/\s+/g, '-'));
         const embed = BasementEmbeds.base(
           '🍿 Now Streaming on Basement',
-          `<@${message.author.id}> is currently streaming **${title}** (${year}) in **${quality}**!\n\nWant to join in? Watch now on [Basement](https://basementx.lol/watch/${encodeURIComponent(title.toLowerCase().replace(/\s+/g, '-'))}).`
+          `<@${message.author.id}> is currently streaming **${title}** (${year}) in **${quality}**!\n\nWant to join in? Watch now on [Basement](https://basementx.lol/media/tmdb-movie-0-${cleanSlug}).`
         )
           .setAuthor({
             name: message.author.displayName || message.author.username,
@@ -351,7 +353,7 @@ export async function handlePrefixMessage(message: Message, client: Client): Pro
         if (!fullArgString) {
           await message.reply(
             `⚠️ **Usage:** \`${prefix}watchparty <Title> | <Minutes from now> | [Stream URL]\`\n` +
-            `*Example:* \`${prefix}watchparty Interstellar | 30 | https://basementx.lol/watch/157336\``
+            `*Example:* \`${prefix}watchparty Interstellar | 30 | https://basementx.lol/media/tmdb-movie-157336-interstellar\``
           );
           return;
         }
@@ -677,6 +679,24 @@ export async function handlePrefixMessage(message: Message, client: Client): Pro
           .setTimestamp();
 
         await message.reply({ embeds: [embed] });
+        return;
+      }
+
+      // 18. ADMIN: METRICS
+      case 'metrics':
+      case 'metric': {
+        if (!(await ensureAdminContextForMessage(message))) return;
+        if ('sendTyping' in message.channel) await message.channel.sendTyping();
+
+        try {
+          const metrics = await MetricsService.fetchMetrics();
+          const payload = BasementEmbeds.createMetricsEmbed(metrics);
+          await message.reply(payload as any);
+        } catch (err: any) {
+          await message.reply(
+            `❌ **Failed to fetch backend metrics**: ${err?.message || 'Unknown network error'}\nEndpoint: \`https://be.basementx.lol/metrics\``
+          );
+        }
         return;
       }
 

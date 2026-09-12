@@ -15,6 +15,7 @@ import {
   DEFAULT_MIRRORS,
 } from './branding.js';
 import { MediaItem, ContentRequest, WatchParty, NodeStatus, ColorRoleDef } from '../types/index.js';
+import { BasementMetrics } from '../services/metrics.js';
 import { db } from '../database/db.js';
 
 export class BasementEmbeds {
@@ -519,7 +520,7 @@ export class BasementEmbeds {
         `• **Aliases:** \`${p}wp\`\n` +
         `• **Description:** Schedules a community watch party event with interactive RSVP counter buttons, live countdown, and direct Basement room links. You can also click the **🍿 Host Watch Party** button on any movie/series card to launch one instantly!\n` +
         `• **Prefix Format:** \`${p}watchparty <title> | <minutes from now> | [link]\`\n` +
-        `• **Example:** \`${p}watchparty Interstellar | 30 | https://basementx.lol/watch/157336\``;
+        `• **Example:** \`${p}watchparty Interstellar | 30 | https://basementx.lol/media/tmdb-movie-157336-interstellar\``;
     } else if (page === 2) {
       categoryName = 'Community & Requests';
       title = '💬 Community & Request Commands';
@@ -587,7 +588,10 @@ export class BasementEmbeds {
         `### 6. \`${p}requests resolve <id> <status> [notes]\` • \`/requests resolve\`\n` +
         `• **Description:** Resolve a user's movie request ticket and send them a DM update.\n` +
         `• **Prefix Format:** \`${p}requests resolve <req-id> <approved|added|rejected> [notes]\`\n` +
-        `• **Example:** \`${p}requests resolve req-123 added Live on basementx.lol! enjoy!\``;
+        `• **Example:** \`${p}requests resolve req-123 added Live on basementx.lol! enjoy!\`\n\n` +
+        `### 7. \`${p}metrics\` • \`/metrics\`\n` +
+        `• **Description:** Live Prometheus backend telemetry, stream sessions, and scraper health from be.basementx.lol/metrics.\n` +
+        `• **Prefix Format:** \`${p}metrics\``;
     }
 
     const embed = new EmbedBuilder()
@@ -644,6 +648,138 @@ export class BasementEmbeds {
     );
 
     return { embeds: [embed], components: [categoryRow, navRow] };
+  }
+
+  /**
+   * Admin Backend Prometheus Metrics Overview
+   */
+  public static createMetricsEmbed(m: BasementMetrics): {
+    embeds: EmbedBuilder[];
+    components: ActionRowBuilder<ButtonBuilder>[];
+  } {
+    const errorList = Object.entries(m.errorBreakdown)
+      .map(([code, count]) => `\`${code}\`: ${count}`)
+      .join(' • ');
+
+    const top3Providers = m.topProviders
+      .slice(0, 3)
+      .map(p => `• **${p.name.toUpperCase()}**: \`${p.success.toLocaleString()} OK\` (${p.successRate}%)`)
+      .join('\n');
+
+    const embed = new EmbedBuilder()
+      .setTitle('⚡ Basement Backend Prometheus Telemetry')
+      .setURL('https://be.basementx.lol/metrics')
+      .setDescription(
+        `Live infrastructure and streaming cluster metrics polled directly from [**be.basementx.lol/metrics**](https://be.basementx.lol/metrics).\n` +
+        `Architecture: **${m.nodeVersion}** • Process Uptime: **${m.uptimeFormatted}**`
+      )
+      .setColor(BASEMENT_COLORS.white)
+      .addFields(
+        {
+          name: '🖥️ System & Resource Health',
+          value:
+            `• **Resident RAM:** \`${m.residentMemoryMb} MB\`\n` +
+            `• **V8 Heap Used:** \`${m.heapUsedMb} MB\` / \`${m.heapTotalMb} MB\`\n` +
+            `• **CPU Time Spent:** \`${m.cpuSecondsTotal}s\`\n` +
+            `• **Event Loop Delay:** \`${m.eventLoopLagMs} ms\``,
+          inline: true,
+        },
+        {
+          name: '🌐 Platform Web Traffic',
+          value:
+            `• **Total Site Requests:** \`${m.siteRequestsTotal.toLocaleString()}\`\n` +
+            `• **Web Default:** \`${m.toolsUsage.default.toLocaleString()}\`\n` +
+            `• **Browser Extension:** \`${m.toolsUsage.extension.toLocaleString()}\`\n` +
+            `• **Desktop App:** \`${m.toolsUsage.desktop.toLocaleString()}\``,
+          inline: true,
+        },
+        {
+          name: '🍿 Stream Sessions & Scrapers',
+          value:
+            `• **Total Watch Requests:** \`${m.totalWatches.toLocaleString()}\`\n` +
+            `• **Stream Success Rate:** **${m.watchSuccessRate}%**\n` +
+            `• **Resolved Streams:** \`${m.successfulWatches.toLocaleString()}\` OK\n` +
+            `• **Failed Attempts:** \`${m.failedWatches.toLocaleString()}\` err`,
+          inline: false,
+        },
+        {
+          name: '🚀 Top Provider Scraping Engines',
+          value: top3Providers || '*No provider metrics recorded yet.*',
+          inline: true,
+        },
+        {
+          name: '🛡️ Security Gate & HTTP Errors',
+          value:
+            `• **Captcha Verifications:** \`${m.captchas.total.toLocaleString()}\` (${m.captchas.gateSuccessRate}% pass)\n` +
+            `• **New Registrations:** \`${m.captchas.registerPassed}\` accounts\n` +
+            `• **HTTP Exceptions:** ${errorList || 'None'}`,
+          inline: true,
+        }
+      )
+      .setFooter({
+        text: 'Basement Prometheus Telemetry Engine • be.basementx.lol/metrics',
+        iconURL: BASEMENT_BRANDING.avatarUrl,
+      })
+      .setTimestamp(m.fetchedAt);
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId('metrics_refresh')
+        .setLabel('Refresh Metrics')
+        .setEmoji('🔄')
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId('metrics_scrapers')
+        .setLabel('All Scrapers')
+        .setEmoji('🔍')
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setLabel('🌐 Open /metrics Endpoint')
+        .setStyle(ButtonStyle.Link)
+        .setURL('https://be.basementx.lol/metrics')
+    );
+
+    return { embeds: [embed], components: [row] };
+  }
+
+  /**
+   * Detailed Scraper Provider Breakdown Embed
+   */
+  public static createScraperEmbed(m: BasementMetrics): {
+    embeds: EmbedBuilder[];
+    components: ActionRowBuilder<ButtonBuilder>[];
+  } {
+    let desc = `Detailed health breakdown for all **${m.topProviders.length}** content scraper providers on [**basementx.lol**](https://basementx.lol):\n\n`;
+
+    m.topProviders.forEach(p => {
+      const rate = parseFloat(p.successRate);
+      const icon = rate >= 80 ? '🟢' : rate >= 40 ? '🟡' : '🔴';
+      desc += `${icon} **${p.name.toUpperCase()}**: **${p.successRate}%** success (\`${p.success.toLocaleString()}\` OK / \`${p.failed.toLocaleString()}\` fail • \`${p.total.toLocaleString()}\` total)\n`;
+    });
+
+    const embed = new EmbedBuilder()
+      .setTitle('🔍 Basement Content Scraper Health & Telemetry')
+      .setURL('https://be.basementx.lol/metrics')
+      .setDescription(desc)
+      .setColor(BASEMENT_COLORS.white)
+      .setFooter({
+        text: 'Basement Scraper Telemetry • be.basementx.lol/metrics',
+        iconURL: BASEMENT_BRANDING.avatarUrl,
+      })
+      .setTimestamp(m.fetchedAt);
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId('metrics_refresh')
+        .setLabel('◀️ Back to Metrics Overview')
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setLabel('🌐 Open /metrics Endpoint')
+        .setStyle(ButtonStyle.Link)
+        .setURL('https://be.basementx.lol/metrics')
+    );
+
+    return { embeds: [embed], components: [row] };
   }
 }
 

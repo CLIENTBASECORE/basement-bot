@@ -10,6 +10,7 @@ import { db } from '../database/db.js';
 import { BasementEmbeds } from '../utils/embeds.js';
 import { StatusService } from '../services/status.js';
 import { CatalogService } from '../services/catalog.js';
+import { MetricsService } from '../services/metrics.js';
 import { CONFIG } from '../config.js';
 import { WatchParty } from '../types/index.js';
 
@@ -144,6 +145,32 @@ export async function handleButtonInteraction(interaction: ButtonInteraction): P
     return;
   }
 
+  // 6b. Refresh Prometheus Metrics
+  if (customId === 'metrics_refresh') {
+    await interaction.deferUpdate();
+    try {
+      const metrics = await MetricsService.fetchMetrics();
+      const payload = BasementEmbeds.createMetricsEmbed(metrics);
+      await interaction.editReply(payload as any);
+    } catch (err: any) {
+      console.warn('[Metrics Refresh Error]', err);
+    }
+    return;
+  }
+
+  // 6c. View All Scrapers
+  if (customId === 'metrics_scrapers') {
+    await interaction.deferUpdate();
+    try {
+      const metrics = await MetricsService.fetchMetrics();
+      const payload = BasementEmbeds.createScraperEmbed(metrics);
+      await interaction.editReply(payload as any);
+    } catch (err: any) {
+      console.warn('[Metrics Scrapers Error]', err);
+    }
+    return;
+  }
+
   // 7. Random reroll
   if (customId === 'random_reroll' || customId.startsWith('random_reroll_')) {
     await interaction.deferUpdate();
@@ -170,7 +197,10 @@ export async function handleButtonInteraction(interaction: ButtonInteraction): P
     const embed = interaction.message.embeds[0];
     const rawTitle = embed?.title || 'Community Watch Party';
     const cleanTitle = rawTitle.replace(/\s*\(\d{4}\)$/, '').trim();
-    const streamUrl = embed?.url || `${CONFIG.BASEMENT_BASE_URL}/watch/${mediaId}`;
+    const isTv = mediaId.startsWith('tv');
+    const cleanId = mediaId.replace(/^(movie|tv)-/, '');
+    const slug = cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const streamUrl = embed?.url || `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-${isTv ? 'tv' : 'movie'}-${cleanId}-${slug}`;
     const scheduledTime = Date.now() + 15 * 60 * 1000;
 
     const wp: WatchParty = {

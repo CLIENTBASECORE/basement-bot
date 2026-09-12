@@ -11,6 +11,7 @@ import {
 import { CatalogService } from '../services/catalog.js';
 import { StatusService } from '../services/status.js';
 import { AiChatService } from '../services/aiChat.js';
+import { MetricsService } from '../services/metrics.js';
 import { BasementEmbeds } from '../utils/embeds.js';
 import { db } from '../database/db.js';
 import { ContentRequest, WatchParty, ColorRoleDef } from '../types/index.js';
@@ -306,7 +307,7 @@ export const watchpartyCommand: Command = {
       id: `wp-${Date.now().toString(36)}`,
       title,
       type: 'movie',
-      streamUrl: link.startsWith('http') ? link : `${CONFIG.BASEMENT_BASE_URL}/watch/${link}`,
+      streamUrl: link.startsWith('http') ? link : `${CONFIG.BASEMENT_BASE_URL}/media/tmdb-movie-${link}`,
       scheduledTime,
       hostId: interaction.user.id,
       hostTag: interaction.user.tag,
@@ -1188,6 +1189,29 @@ export const helpCommand: Command = {
   },
 };
 
+// 17. /metrics (ADMIN ONLY & ADMIN CHANNEL ONLY)
+export const metricsCommand: Command = {
+  data: new SlashCommandBuilder()
+    .setName('metrics')
+    .setDescription('Fetch live backend Prometheus telemetry from https://be.basementx.lol/metrics')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .setDMPermission(false),
+  async execute(interaction) {
+    if (!(await ensureAdminContext(interaction))) return;
+
+    await interaction.deferReply();
+    try {
+      const metrics = await MetricsService.fetchMetrics();
+      const payload = BasementEmbeds.createMetricsEmbed(metrics);
+      await interaction.editReply(payload as any);
+    } catch (err: any) {
+      await interaction.editReply({
+        content: `❌ **Failed to fetch backend metrics**: ${err.message || 'Unknown network error'}\nEndpoint: \`https://be.basementx.lol/metrics\``,
+      });
+    }
+  },
+};
+
 export const ALL_COMMANDS: Command[] = [
   helpCommand,
   searchCommand,
@@ -1206,4 +1230,5 @@ export const ALL_COMMANDS: Command[] = [
   announceCommand,
   panelCommand,
   adminsetupCommand,
+  metricsCommand,
 ];
