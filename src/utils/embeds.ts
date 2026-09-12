@@ -242,20 +242,20 @@ export class BasementEmbeds {
     });
 
     const embed = new EmbedBuilder()
-      .setTitle('🔥 Top Trending on Basement Today')
+      .setTitle('🔥 Discover Top Titles on Basement Today')
       .setDescription(desc)
       .setColor(BASEMENT_COLORS.emerald)
       .setImage(items[0]?.backdropUrl || null)
       .setFooter({
-        text: 'Basement Daily Charts • Powered by Live TMDB Data',
+        text: 'Basement Discover • Powered by Live TMDB Data',
         iconURL: BASEMENT_BRANDING.avatarUrl,
       });
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setLabel('🌐 Open Basement Trending')
+        .setLabel('🌐 Discover on Basement')
         .setStyle(ButtonStyle.Link)
-        .setURL(`${BASEMENT_BRANDING.websiteUrl}/trending`),
+        .setURL(`${BASEMENT_BRANDING.websiteUrl}/discover`),
       new ButtonBuilder()
         .setCustomId('random_reroll')
         .setLabel('🎲 Surprise Me')
@@ -483,7 +483,7 @@ export class BasementEmbeds {
         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
         `### 📂 Select a Category Below:\n\n` +
         `• **🎬 Media & Streaming (Page 2)**\n` +
-        `  Search TMDB catalog, view trending, roll random titles, broadcast now playing, schedule watch parties.\n\n` +
+        `  Search TMDB catalog, discover top trending titles, roll random titles, broadcast now playing, schedule watch parties.\n\n` +
         `• **💬 Community & Requests (Page 3)**\n` +
         `  Request missing movies/series, public ticket queue, chat with Basement AI, node latency, domain mirrors.\n\n` +
         `• **🛡️ Administrator & Setup (Page 4)**\n` +
@@ -500,10 +500,10 @@ export class BasementEmbeds {
         `• **Description:** Searches the Basement TMDB catalog and generates an interactive detail card with direct stream links, genres, ratings, and synopsis.\n` +
         `• **Prefix Format:** \`${p}search <title>\` or \`${p}movie <title>\`\n` +
         `• **Example:** \`${p}movie Inception\` or \`${p}series Breaking Bad\`\n\n` +
-        `### 2. \`${p}trending\` • \`/trending\`\n` +
-        `• **Aliases:** \`${p}top\`\n` +
-        `• **Description:** Displays the top 5 trending movies & TV shows on Basement today with verified TMDB ratings, review counts, and instant stream buttons.\n` +
-        `• **Prefix Format:** \`${p}trending\`\n\n` +
+        `### 2. \`${p}discover\` • \`/discover\`\n` +
+        `• **Aliases:** \`${p}trending\`, \`${p}top\`\n` +
+        `• **Description:** Displays top discover & trending movies & TV shows on Basement today with verified TMDB ratings, review counts, and instant stream buttons.\n` +
+        `• **Prefix Format:** \`${p}discover\` (or \`${p}trending\`)\n\n` +
         `### 3. \`${p}random [genre|type]\` • \`/random [genre] [type]\`\n` +
         `• **Aliases:** \`${p}roll\`\n` +
         `• **Description:** Dynamically pulls a high-rated title from live TMDB Trending, Popular, and Top-Rated libraries. Every roll is genuinely different. If a genre is provided (e.g. Action, Horror, Comedy, Sci-Fi, Thriller), it guarantees a title from that specific genre!\n` +

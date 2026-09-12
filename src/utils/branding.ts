@@ -30,7 +30,7 @@ export const BASEMENT_BRANDING = {
   name: 'Basement',
   wordmark: 'basement.',
   tagline: 'Stream Movies & Series on Basement',
-  avatarUrl: 'https://basementx.lol/icon.png',
+  avatarUrl: 'https://raw.githubusercontent.com/CLIENTBASECORE/basement-bot/main/assets/icon.png',
   bannerUrl: 'https://basementx.lol/og-image.jpg',
   websiteUrl: 'https://basementx.lol',
   supportDiscord: 'https://discord.gg/mYvhW9FNC9',

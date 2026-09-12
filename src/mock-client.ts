@@ -35,13 +35,13 @@ async function testSuite() {
   console.log(`   Watch URL: ${searchResults[0].zenoxUrl}`);
   console.log('   ✅ Search embed valid.\n');
 
-  // 5. Test Trending
-  console.log('5. Testing Trending ("/trending")...');
+  // 5. Test Discover
+  console.log('5. Testing Discover ("/discover")...');
   const trending = await CatalogService.getTrending();
   const trendingEmbed = BasementEmbeds.trendingList(trending);
-  console.log(`   Trending Count: ${trending.length}`);
+  console.log(`   Discover Count: ${trending.length}`);
   console.log(`   Embed Title: "${trendingEmbed.embeds[0].data.title}"`);
-  console.log('   ✅ Trending embed valid.\n');
+  console.log('   ✅ Discover embed valid.\n');
 
   // 6. Test Status Check
   console.log('6. Testing Status Telemetry ("/status")...');

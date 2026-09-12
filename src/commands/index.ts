@@ -119,11 +119,23 @@ export const searchCommand: Command = {
   },
 };
 
-// 2. /trending
+// 2. /discover (and /trending alias)
+export const discoverCommand: Command = {
+  data: new SlashCommandBuilder()
+    .setName('discover')
+    .setDescription('Discover the top trending movies & TV shows on Basement today (live TMDB)'),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const trending = await CatalogService.getTrending();
+    const payload = BasementEmbeds.trendingList(trending);
+    await interaction.editReply(payload);
+  },
+};
+
 export const trendingCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('trending')
-    .setDescription('View the top 5 trending movies & TV shows on Basement today (live TMDB)'),
+    .setDescription('Discover the top trending movies & TV shows on Basement today (alias for /discover)'),
   async execute(interaction) {
     await interaction.deferReply();
     const trending = await CatalogService.getTrending();
@@ -941,7 +953,7 @@ export const adminsetupCommand: Command = {
           updatedColors.map(c => `${c.emoji} \`@${c.name}\` (${c.hex})`).join('\n') +
           deployMessage
         )
-        .setFooter({ text: 'Basement Role Dispatcher • Single-choice exclusive logic enabled' });
+        .setFooter({ text: 'Basement Role Dispatcher • Single-choice exclusive logic enabled', iconURL: BASEMENT_BRANDING.avatarUrl });
 
       await interaction.editReply({ embeds: [embed] });
       return;
@@ -998,7 +1010,7 @@ export const adminsetupCommand: Command = {
           DEFAULT_SHOW_ROLES.map(s => `${s.emoji} \`@${s.name}\` (${s.genre})`).join('\n') +
           deployMessage
         )
-        .setFooter({ text: 'Basement TV Show Hub • Exclusive spoiler channel access' });
+        .setFooter({ text: 'Basement TV Show Hub • Exclusive spoiler channel access', iconURL: BASEMENT_BRANDING.avatarUrl });
 
       await interaction.editReply({ embeds: [embed] });
       return;
@@ -1055,7 +1067,7 @@ export const adminsetupCommand: Command = {
           DEFAULT_PING_ROLES.map(p => `${p.emoji} \`@${p.name}\` — *${p.description}*`).join('\n') +
           deployMessage
         )
-        .setFooter({ text: 'Basement Notification Dispatcher' });
+        .setFooter({ text: 'Basement Notification Dispatcher', iconURL: BASEMENT_BRANDING.avatarUrl });
 
       await interaction.editReply({ embeds: [embed] });
       return;
@@ -1116,7 +1128,7 @@ export const adminsetupCommand: Command = {
           `Successfully verified and unlocked command permissions for **${guild.name}**:\n\n` +
           `• **@everyone Role**: \`UseApplicationCommands\` enabled.\n` +
           `• **Channel Overrides Cleared**: \`${clearedCount}\` channel restrictions removed.\n\n` +
-          `Normal public commands (\`/search\`, \`/trending\`, \`/random\`, \`/request\`, \`/chat\`, \`/requests list\`, etc.) are now visible and work for **every member in every channel**.`
+          `Normal public commands (\`/search\`, \`/discover\`, \`/random\`, \`/request\`, \`/chat\`, \`/requests list\`, etc.) are now visible and work for **every member in every channel**.`
         )
         .setFooter({ text: 'Basement Permission Manager • basementx.lol', iconURL: BASEMENT_BRANDING.avatarUrl });
 
@@ -1179,6 +1191,7 @@ export const helpCommand: Command = {
 export const ALL_COMMANDS: Command[] = [
   helpCommand,
   searchCommand,
+  discoverCommand,
   trendingCommand,
   randomCommand,
   requestCommand,

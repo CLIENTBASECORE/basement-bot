@@ -105,7 +105,8 @@ export async function handlePrefixMessage(message: Message, client: Client): Pro
         return;
       }
 
-      // 4. TRENDING / TOP
+      // 4. DISCOVER / TRENDING / TOP
+      case 'discover':
       case 'trending':
       case 'top': {
         if ('sendTyping' in message.channel) await message.channel.sendTyping();

@@ -12,7 +12,7 @@ export class AiChatService {
     // 1. Greetings & Identity
     if (/^(hi|hello|hey|yo|sup|greet|gm|gn)\b/.test(p)) {
       const greetings = [
-        `Hey ${userMention}! 🍿 What are we watching tonight? Ask me for recommendations, or run \`/trending\` to check today's top streams on **basementx.lol**!`,
+        `Hey ${userMention}! 🍿 What are we watching tonight? Ask me for recommendations, or run \`/discover\` to check today's top streams on **basementx.lol**!`,
         `Greetings ${userMention}! Basement Cinema AI online and standing by. Need a movie pick or looking for a specific series? Just ask!`,
         `Yo ${userMention}! Ready to dive into some cinema? Tell me your favorite genre or mood and I'll find something fire for you on **basementx.lol**!`,
       ];
@@ -82,7 +82,7 @@ export class AiChatService {
           `Check out **${randomItem.title}** (${randomItem.year}) — rated ⭐ **${randomItem.rating}/10**!\n` +
           `*${randomItem.overview.slice(0, 180)}...*\n\n` +
           `Quality: \`${randomItem.quality}\` | Stream now on [**basementx.lol**](${randomItem.basementUrl})! 🍿\n` +
-          `Want more? Run \`/random\` or \`/trending\`!`
+          `Want more? Run \`/random\` or \`/discover\`!`
         );
       }
 
@@ -92,7 +92,7 @@ export class AiChatService {
         `*${randomItem.overview.slice(0, 160)}...*\n\n` +
         `Genres: \`${randomItem.genres.join(', ')}\`\n` +
         `▶ **Stream in 4K HDR**: [Watch on Basement](${randomItem.basementUrl})\n\n` +
-        `You can also run \`/random\` for instant rolls or \`/trending\` for what's hot today!`
+        `You can also run \`/random\` for instant rolls or \`/discover\` for what's hot today!`
       );
     }
 
@@ -131,7 +131,7 @@ export class AiChatService {
     return (
       `🎬 **Basement Cinema Concierge:**\n` +
       `I hear you! Whether you're hunting for a late-night thriller, planning a watch party, or looking for high-bitrate 4K streaming, [**basementx.lol**](https://basementx.lol) has you covered.\n\n` +
-      `• Need ideas? Try asking: *"Recommend an action movie"* or run \`/trending\`\n` +
+      `• Need ideas? Try asking: *"Recommend an action movie"* or run \`/discover\`\n` +
       `• Want a specific title? Try \`/search [title]\`\n` +
       `• Missing something in our library? Use \`/request\`!`
     );
