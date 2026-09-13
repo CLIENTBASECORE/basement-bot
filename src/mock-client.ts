@@ -85,9 +85,35 @@ async function testSuite() {
   console.log(`   Total Stream Watches: ${metrics.totalWatches} (Rate: ${metrics.watchSuccessRate}%)`);
   console.log(`   Top Scrapers: ${metrics.topProviders.length} providers`);
   console.log(`   Embed Title: "${metricsEmbed.embeds[0].data.title}"`);
-  console.log('   ✅ Metrics telemetry valid.\n');
+  // 9. Test Help Menu Security (Public vs Admin)
+  console.log('9. Testing Help Menu Security (Public vs Admin)...');
+  const publicHelp = BasementEmbeds.createHelpMenu(0, '!', false);
+  const publicCatButtons = publicHelp.components[0].components.map(b => (b.data as any).custom_id);
+  if (publicCatButtons.includes('help_cat_3')) {
+    throw new Error('SECURITY VIOLATION: help_cat_3 (Admin) found on public help menu!');
+  }
+  const publicDesc = publicHelp.embeds[0].data.description || '';
+  if (publicDesc.includes('Administrator & Setup') || publicDesc.includes('adminsetup')) {
+    throw new Error('SECURITY VIOLATION: Admin setup leaked in public help overview description!');
+  }
+  const hackedPublicHelp = BasementEmbeds.createHelpMenu(3, '!', false);
+  if (hackedPublicHelp.embeds[0].data.title?.includes('Administrator')) {
+    throw new Error('SECURITY VIOLATION: Admin page served to unauthenticated public user!');
+  }
 
-  console.log('\x1b[32m=== ALL 8 SYSTEM TESTS PASSED SUCCESSFULLY ===\x1b[0m');
+  const adminHelp = BasementEmbeds.createHelpMenu(3, '!', true);
+  const adminCatButtons = adminHelp.components[0].components.map(b => (b.data as any).custom_id);
+  if (!adminCatButtons.includes('help_cat_3')) {
+    throw new Error('Admin help menu missing help_cat_3 button!');
+  }
+  if (!adminHelp.embeds[0].data.title?.includes('Administrator')) {
+    throw new Error('Admin help page 3 title missing Administrator header!');
+  }
+  console.log('   ✅ Public help menu strictly sanitized (0 admin leaks).');
+  console.log('   ✅ Admin help menu properly accessible only when isAdmin=true.\n');
+
+  console.log('\x1b[32m=== ALL 9 SYSTEM TESTS PASSED SUCCESSFULLY ===\x1b[0m');
 }
 
 testSuite();
+
